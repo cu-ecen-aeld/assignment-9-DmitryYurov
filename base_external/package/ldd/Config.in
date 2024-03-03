@@ -1,0 +1,4 @@
+config BR2_PACKAGE_LDD
+	bool "ldd"
+	help
+	  Includes necessary executables and libraries for the assignment 7
