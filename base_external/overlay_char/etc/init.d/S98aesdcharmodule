@@ -1,0 +1,37 @@
+#! /bin/sh
+
+mode="664"
+
+# Group: since distributions do it differently, look for wheel or use staff
+if grep -q '^staff:' /etc/group; then
+    group="staff"
+else
+    group="wheel"
+fi
+
+case "$1" in
+    start)
+        echo "Starting aesdchar module (assignment 8)"
+
+        insmod ./lib/modules/5.15.18/extra/aesdchar.ko || exit 1
+        major=$(awk "\$2==\"aesdchar\" {print \$1}" /proc/devices)
+        
+		rm -f /dev/aesdchar
+        mknod /dev/aesdchar c $major 0
+        chgrp $group /dev/aesdchar 
+        chmod $mode  /dev/aesdchar
+
+        ;;
+    stop)
+        echo "Stopping aesdchar module (assignment 8)"
+
+        rmmod aesdchar || exit 1
+        rm -f /dev/aesdchar
+
+        ;;
+    *)
+        echo "Usage: $0 start|stop"
+    exit 1
+esac
+
+exit 0
